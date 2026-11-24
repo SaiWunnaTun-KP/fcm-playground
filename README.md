@@ -1,45 +1,36 @@
-🔔 FCM Playground — Web Push Setup Guide & Live Tester
+# 🔔 FCM Playground — Web Push Setup Guide & Live Tester
 
-Interactive Firebase Cloud Messaging (FCM) testing platform and step-by-step Burmese setup guide built with React, Express, and a Retro-Comic Bento UI.
+> **Interactive Firebase Cloud Messaging (FCM) testing platform and step-by-step Burmese setup guide built with React, Express, and a Retro-Comic Bento UI.**
 
-FCM Playground helps developers learn how Firebase Cloud Messaging (FCM) works on the Web from scratch—covering Firebase project configuration, Service Workers, VAPID keys, and foreground/background message handling—while providing a foundation to send and diagnose live push notifications without constantly switching back to the Firebase Console.
+FCM Playground helps developers learn how **Firebase Cloud Messaging (FCM)** works on the Web from scratch—covering Firebase project configuration, Service Workers, VAPID keys, and foreground/background message handling—while providing a foundation to send and diagnose live push notifications without constantly switching back to the Firebase Console.
 
-✨ Key Features
+---
 
-🎨 Retro-Comic Bento Design System: Crafted with warm paper-cream surfaces (#F5EFE6), bold ink borders, tactile pill buttons, and zero heavy drop shadows for comfortable long-form reading in Burmese.
+## ✨ Key Features
 
-🧊 Lightweight 2.5D Isometric Flow Demo: Pure SVG isometric architecture diagram illustrating how push payloads travel from an Express Server (Admin SDK) ➔ Google FCM Hub ➔ Client Browser (Foreground vs. Background).
+- **🎨 Retro-Comic Bento Design System:** Crafted with warm paper-cream surfaces (`#F5EFE6`), bold ink borders, tactile pill buttons, and zero heavy drop shadows for comfortable long-form reading in Burmese.
+- **🧊 Lightweight 2.5D Isometric Flow Demo:** Pure SVG isometric architecture diagram illustrating how push payloads travel from an **Express Server (Admin SDK)** ➔ **Google FCM Hub** ➔ **Client Browser** (Foreground vs. Background).
+- **📖 Step-by-Step Burmese Documentation:**
+  - **Part 1 (Client-Side Setup):** Creating a Firebase project, initializing the Web SDK, configuring `public/firebase-messaging-sw.js`, generating VAPID keys, handling common Vite MIME-type pitfalls, and sending test messages.
+  - **Part 2 (Server-Side Admin SDK):** *Coming Soon*
+- **⚡ Ephemeral Backend Architecture (Security-First):** Built with an Express API that initializes temporary, UUID-isolated Firebase Admin app instances per request and immediately destroys them (`deleteApp`) in a `finally` block—ensuring `serviceAccountKey.json` credentials are never persisted to disk or leaked in memory.
+- **🧪 Live Notification Tester UI:** *Coming Soon*
 
-📖 Step-by-Step Burmese Documentation:
+---
 
-Part 1 (Client-Side Setup): Creating a Firebase project, initializing the Web SDK, configuring public/firebase-messaging-sw.js, generating VAPID keys, handling common Vite MIME-type pitfalls, and sending test messages.
+## 🛠️ Tech Stack
 
-Part 2 (Server-Side Admin SDK): Coming Soon
+| Layer | Technologies |
+| :--- | :--- |
+| **Frontend (`client/`)** | React 19, Vite, Tailwind CSS v4, React Router, Lucide React, Pure SVG Isometric Graphics |
+| **Backend (`server/`)** | Node.js, Express, Firebase Admin SDK (`firebase-admin`), CORS, Dotenv |
+| **Deployment** | Vercel (Frontend SPA) |
 
-⚡ Ephemeral Backend Architecture (Security-First): Built with an Express API that initializes temporary, UUID-isolated Firebase Admin app instances per request and immediately destroys them (deleteApp) in a finally block—ensuring serviceAccountKey.json credentials are never persisted to disk or leaked in memory.
+---
 
-🧪 Live Notification Tester UI: Coming Soon
+## 📂 Monorepo Structure
 
-🛠️ Tech Stack
-
-Layer
-
-Technologies
-
-Frontend (client/)
-
-React 19, Vite, Tailwind CSS v4, React Router, Lucide React, Pure SVG Isometric Graphics
-
-Backend (server/)
-
-Node.js, Express, Firebase Admin SDK (firebase-admin), CORS, Dotenv
-
-Deployment
-
-Vercel (Frontend SPA)
-
-📂 Monorepo Structure
-
+```text
 fcm-playground/
 ├── client/                         # React + Vite Frontend
 │   ├── public/
@@ -70,63 +61,60 @@ fcm-playground/
 │
 ├── .gitignore                      # Root monorepo ignore rules
 └── README.md
+```
 
+---
 
-🚀 Getting Started (Local Development)
+## 🚀 Getting Started (Local Development)
 
-Prerequisites
+### Prerequisites
+- **Node.js** (v18+ recommended)
+- **npm** or **yarn**
+- A **Firebase Project** from the [Firebase Console](https://console.firebase.google.com)
 
-Node.js (v18+ recommended)
-
-npm or yarn
-
-A Firebase Project from the Firebase Console
-
-1. Clone the Repository
-
+### 1. Clone the Repository
+```bash
 git clone https://github.com/your-username/fcm-playground.git
 cd fcm-playground
+```
 
-
-2. Start the Backend Server (server/)
-
+### 2. Start the Backend Server (`server/`)
+```bash
 cd server
 npm install
 cp .env.example .env
 npm run dev
+```
+The Express server will start at `http://localhost:5000` (check `GET /api/health`).
 
-
-The Express server will start at http://localhost:5000 (check GET /api/health).
-
-3. Start the Frontend Client (client/)
-
+### 3. Start the Frontend Client (`client/`)
 Open a new terminal window:
-
+```bash
 cd client
 npm install
 npm run dev
+```
+Open `http://localhost:5173` in your browser to explore the Home page and Setup Documentation.
 
+---
 
-Open http://localhost:5173 in your browser to explore the Home page and Setup Documentation.
+## 🗺️ Roadmap
 
-🗺️ Roadmap
+- [x] Retro-Comic Bento UI theme & responsive layout
+- [x] Interactive 2.5D Isometric SVG message flow diagram
+- [x] **Docs Part 1:** Client-Side Web Push Setup Guide (Burmese) with troubleshooting tips
+- [x] Express API with ephemeral Firebase Admin SDK execution & bilingual diagnostics
+- [ ] **Docs Part 2:** Server-Side Node.js & `firebase-admin` Setup Guide
+- [ ] **Live Tester UI:** Browser token generator, Service Account JSON uploader, Dry-Run validator, and Topic manager
 
-[x] Retro-Comic Bento UI theme & responsive layout
+---
 
-[x] Interactive 2.5D Isometric SVG message flow diagram
+## 🔒 Security Note
 
-[x] Docs Part 1: Client-Side Web Push Setup Guide (Burmese) with troubleshooting tips
+Never commit your `serviceAccountKey.json` or `.env` files to version control. The root `.gitignore` is pre-configured to exclude all Firebase Admin private keys (`*firebase-adminsdk*.json`) and environment files.
 
-[x] Express API with ephemeral Firebase Admin SDK execution & bilingual diagnostics
+---
 
-[ ] Docs Part 2: Server-Side Node.js & firebase-admin Setup Guide
+## 📄 License
 
-[ ] Live Tester UI: Browser token generator, Service Account JSON uploader, Dry-Run validator, and Topic manager
-
-🔒 Security Note
-
-Never commit your serviceAccountKey.json or .env files to version control. The root .gitignore is pre-configured to exclude all Firebase Admin private keys (*firebase-adminsdk*.json) and environment files.
-
-📄 License
-
-This project is open-source and available under the MIT License.
+This project is open-source and available under the [MIT License](LICENSE).
