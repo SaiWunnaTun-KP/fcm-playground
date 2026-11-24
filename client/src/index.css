@@ -15,11 +15,14 @@
   --color-comic-yellow: #EAB32E;
 }
 
+html,
 body {
   font-family: var(--font-sans);
   background-color: var(--color-paper);
   color: var(--color-ink);
   line-height: 1.75;
+  overflow-x: clip;
+  width: 100%;
 }
 
 /* Heavy shadow မပါဘဲ သပ်ရပ်သော Comic Panel အကွက် */

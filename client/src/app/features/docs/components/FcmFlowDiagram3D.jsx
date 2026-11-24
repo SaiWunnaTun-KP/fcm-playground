@@ -49,12 +49,10 @@ export default function FcmFlowDiagram3D() {
     setFlowState({ step: stepNum, progress: 100 });
   };
 
-  // Hop 1 Line: Express Server (198, 152) -> Google FCM (356, 202)
   const p1 = progress / 100;
   const packet1X = 198 + (356 - 198) * p1;
   const packet1Y = 152 + (202 - 152) * p1;
 
-  // Hop 2 Line: Google FCM (484, 202) -> Client Browser (642, 152)
   const packet2X = 484 + (642 - 484) * p1;
   const packet2Y = 202 + (152 - 202) * p1;
 
@@ -62,8 +60,9 @@ export default function FcmFlowDiagram3D() {
     FLOW_STEPS.find((item) => item.step === activeStep) || FLOW_STEPS[0];
 
   return (
-    <div className="border-2 border-[#1C1917] rounded-2xl overflow-hidden bg-[#1C1917] text-[#FCF9F4]">
-      <div className="bg-[#292524] border-b-2 border-[#1C1917] px-4 py-3 flex items-center justify-between gap-3">
+    <div className="w-full max-w-full border-2 border-[#1C1917] rounded-2xl overflow-hidden bg-[#1C1917] text-[#FCF9F4]">
+      {/* Top Control Header */}
+      <div className="bg-[#292524] border-b-2 border-[#1C1917] px-3.5 sm:px-4 py-2.5 sm:py-3 flex flex-wrap items-center justify-between gap-2">
         <span className="px-3 py-1 rounded-full bg-[#EAB32E] text-[#1C1917] text-xs sm:text-sm font-bold">
           Message ဖြတ်သန်းစီးဆင်းပုံ နမူနာ
         </span>
@@ -71,7 +70,7 @@ export default function FcmFlowDiagram3D() {
         <button
           type="button"
           onClick={() => setIsPlaying((prev) => !prev)}
-          className="px-3.5 py-1 rounded-full text-xs font-mono font-bold border border-[#FCF9F4]/30 bg-[#1C1917] hover:bg-[#FCF9F4]/15 transition-colors flex items-center gap-1.5 cursor-pointer"
+          className="px-3 py-1 rounded-full text-xs font-mono font-bold border border-[#FCF9F4]/30 bg-[#1C1917] hover:bg-[#FCF9F4]/15 transition-colors flex items-center gap-1.5 cursor-pointer"
         >
           {isPlaying ? (
             <>
@@ -112,7 +111,6 @@ export default function FcmFlowDiagram3D() {
             </pattern>
           </defs>
 
-          {/* Background Isometric Grid */}
           <rect width="840" height="330" fill="url(#isoGrid)" />
 
           {/* Track 1: Express Server -> Google FCM */}
@@ -122,7 +120,7 @@ export default function FcmFlowDiagram3D() {
             x2="356"
             y2="202"
             stroke={activeStep === 1 ? '#F26D21' : '#78716C'}
-            strokeWidth={activeStep === 1 ? '3.5' : '2.5'}
+            strokeWidth={activeStep === 1 ? '4' : '2.5'}
             strokeDasharray="7 6"
           />
 
@@ -133,7 +131,7 @@ export default function FcmFlowDiagram3D() {
             x2="642"
             y2="152"
             stroke={activeStep === 2 ? '#EAB32E' : '#78716C'}
-            strokeWidth={activeStep === 2 ? '3.5' : '2.5'}
+            strokeWidth={activeStep === 2 ? '4' : '2.5'}
             strokeDasharray="7 6"
           />
 
@@ -191,17 +189,17 @@ export default function FcmFlowDiagram3D() {
               fill="#1C1917"
               fontFamily="JetBrains Mono, monospace"
               fontWeight="bold"
-              fontSize="13"
+              fontSize="14"
             >
               {'{ API }'}
             </text>
 
             <rect
-              x="66"
+              x="54"
               y="222"
-              width="148"
-              height="28"
-              rx="14"
+              width="172"
+              height="32"
+              rx="16"
               fill={activeStep === 1 ? '#4C9F98' : '#292524'}
               stroke="#FCF9F4"
               strokeOpacity="0.4"
@@ -209,12 +207,12 @@ export default function FcmFlowDiagram3D() {
             />
             <text
               x="140"
-              y="240"
+              y="243"
               textAnchor="middle"
               fill="#FCF9F4"
               fontFamily="JetBrains Mono, monospace"
               fontWeight="bold"
-              fontSize="11"
+              fontSize="13"
             >
               1. EXPRESS SERVER
             </text>
@@ -255,17 +253,17 @@ export default function FcmFlowDiagram3D() {
               textAnchor="middle"
               fill="#1C1917"
               fontFamily="Archivo Black, sans-serif"
-              fontSize="13"
+              fontSize="14"
             >
               FCM HUB
             </text>
 
             <rect
-              x="342"
+              x="330"
               y="275"
-              width="156"
-              height="28"
-              rx="14"
+              width="180"
+              height="32"
+              rx="16"
               fill={activeStep === 2 ? '#EAB32E' : '#292524'}
               stroke="#FCF9F4"
               strokeOpacity="0.4"
@@ -273,12 +271,12 @@ export default function FcmFlowDiagram3D() {
             />
             <text
               x="420"
-              y="293"
+              y="296"
               textAnchor="middle"
               fill={activeStep === 2 ? '#1C1917' : '#FCF9F4'}
               fontFamily="JetBrains Mono, monospace"
               fontWeight="bold"
-              fontSize="11"
+              fontSize="13"
             >
               2. GOOGLE FCM CLOUD
             </text>
@@ -317,14 +315,14 @@ export default function FcmFlowDiagram3D() {
             <circle cx="696" cy="127" r="3" fill="#EAB32E" />
             <circle cx="706" cy="132" r="3" fill="#4C9F98" />
 
-            {/* Pop-up Notification Toast when Step 3 is Active */}
+            {/* Pop-up Notification Toast */}
             {activeStep === 3 && (
               <g>
                 <rect
-                  x="622"
-                  y="32"
-                  width="156"
-                  height="44"
+                  x="612"
+                  y="28"
+                  width="176"
+                  height="48"
                   rx="10"
                   fill="#F26D21"
                   stroke="#FCF9F4"
@@ -338,12 +336,12 @@ export default function FcmFlowDiagram3D() {
                 />
                 <text
                   x="700"
-                  y="51"
+                  y="49"
                   textAnchor="middle"
                   fill="#FCF9F4"
                   fontFamily="JetBrains Mono, monospace"
                   fontWeight="bold"
-                  fontSize="11"
+                  fontSize="12"
                 >
                   NEW PUSH NOTI!
                 </text>
@@ -353,7 +351,7 @@ export default function FcmFlowDiagram3D() {
                   textAnchor="middle"
                   fill="#FCF9F4"
                   fontFamily="Noto Sans Myanmar, sans-serif"
-                  fontSize="10"
+                  fontSize="11"
                 >
                   Banner တက်လာပါပြီ
                 </text>
@@ -361,11 +359,11 @@ export default function FcmFlowDiagram3D() {
             )}
 
             <rect
-              x="626"
+              x="614"
               y="222"
-              width="148"
-              height="28"
-              rx="14"
+              width="172"
+              height="32"
+              rx="16"
               fill={activeStep === 3 ? '#7EA6E8' : '#292524'}
               stroke="#FCF9F4"
               strokeOpacity="0.4"
@@ -373,12 +371,12 @@ export default function FcmFlowDiagram3D() {
             />
             <text
               x="700"
-              y="240"
+              y="243"
               textAnchor="middle"
               fill={activeStep === 3 ? '#1C1917' : '#FCF9F4'}
               fontFamily="JetBrains Mono, monospace"
               fontWeight="bold"
-              fontSize="11"
+              fontSize="13"
             >
               3. CLIENT BROWSER
             </text>
@@ -387,17 +385,11 @@ export default function FcmFlowDiagram3D() {
           {/* ANIMATED TRAVELING PACKETS */}
           {activeStep === 1 && (
             <g>
+              <circle cx={packet1X} cy={packet1Y} r="12" fill="#F26D21" opacity="0.35" />
               <circle
                 cx={packet1X}
                 cy={packet1Y}
-                r="11"
-                fill="#F26D21"
-                opacity="0.35"
-              />
-              <circle
-                cx={packet1X}
-                cy={packet1Y}
-                r="6.5"
+                r="7"
                 fill="#F26D21"
                 stroke="#FCF9F4"
                 strokeWidth="2"
@@ -407,17 +399,11 @@ export default function FcmFlowDiagram3D() {
 
           {activeStep === 2 && (
             <g>
+              <circle cx={packet2X} cy={packet2Y} r="12" fill="#EAB32E" opacity="0.35" />
               <circle
                 cx={packet2X}
                 cy={packet2Y}
-                r="11"
-                fill="#EAB32E"
-                opacity="0.35"
-              />
-              <circle
-                cx={packet2X}
-                cy={packet2Y}
-                r="6.5"
+                r="7"
                 fill="#EAB32E"
                 stroke="#1C1917"
                 strokeWidth="2"
@@ -428,7 +414,7 @@ export default function FcmFlowDiagram3D() {
       </div>
 
       {/* Bottom Step Switcher & Live Narration */}
-      <div className="bg-[#292524] border-t-2 border-[#1C1917] p-4 sm:p-5 space-y-3">
+      <div className="bg-[#292524] border-t-2 border-[#1C1917] p-3.5 sm:p-5 space-y-3">
         <div className="flex flex-wrap items-center gap-2">
           {[1, 2, 3].map((num) => (
             <button
