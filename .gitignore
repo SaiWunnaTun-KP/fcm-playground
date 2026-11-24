@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Environment variables (.env.example ကိုတော့ Git ပေါ်တင်မည်)
+.env
+.env.*
+!.env.example
+
+# Firebase Admin Private Keys (လုံးဝ GitHub မတင်မိစေရန်)
+serviceAccountKey.json
+*firebase-adminsdk*.json
+
+# OS & Editor files
+.DS_Store
+.vscode/
+.idea/
