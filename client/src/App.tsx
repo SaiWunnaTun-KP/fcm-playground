@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import MainLayout from './app/layout/MainLayout';
-import HomePage from './app/features/landing/HomePage';
-import DocsPage from './app/features/docs/DocsPage';
-import LiveTestPage from './app/features/live-test/LiveTestPage';
+import HomePage from './app/features/landing';
+import DocsPage from './app/features/docs';
+import LiveTestPage from './app/features/live-test';
 
 export default function App() {
   return (

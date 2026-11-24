@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Zap, ArrowUpRight, Lightbulb, AlertTriangle } from 'lucide-react';
-import { DOC_SECTIONS } from './docsData';
-import DocsOverview from './DocsOverview';
-import DocsSidebar from './DocsSidebar';
-import CodeBlock from './CodeBlock';
+import { DOC_SECTIONS } from './data/docsData';
+import DocsOverview from './components/DocsOverview';
+import DocsSidebar from './components/DocsSidebar';
+import CodeBlock from './components/CodeBlock';
 
 export default function DocsPage() {
   const allSectionIds = ['overview', ...DOC_SECTIONS.flatMap((g) => g.steps.map((s) => s.id))];

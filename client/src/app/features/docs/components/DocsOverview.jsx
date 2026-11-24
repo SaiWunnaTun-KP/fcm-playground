@@ -58,11 +58,10 @@ export default function DocsOverview() {
           {PLATFORMS.map((platform) => (
             <span
               key={platform.name}
-              className={`px-3.5 py-1 rounded-full border-2 border-[#1C1917] text-xs sm:text-sm font-mono font-bold flex items-center gap-1.5 ${
-                platform.active
+              className={`px-3.5 py-1 rounded-full border-2 border-[#1C1917] text-xs sm:text-sm font-mono font-bold flex items-center gap-1.5 ${platform.active
                   ? 'bg-[#4C9F98] text-[#FCF9F4] shadow-[2px_2px_0px_#1C1917]'
                   : 'bg-[#F5EFE6] text-[#1C1917]/75'
-              }`}
+                }`}
             >
               {platform.active && <Globe className="w-3.5 h-3.5" />}
               <span>{platform.name}</span>

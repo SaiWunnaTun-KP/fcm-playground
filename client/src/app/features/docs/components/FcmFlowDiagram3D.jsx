@@ -1,31 +1,21 @@
 import { useState, useEffect } from 'react';
-import { Play, RotateCcw, Send, Pause } from 'lucide-react';
+import { Play, Pause } from 'lucide-react';
 
 const FLOW_STEPS = [
   {
-    step: 0,
-    label: 'READY',
-    title: 'အသင့်အနေအထား (Idle)',
-    description:
-      'Express Server မှ Admin SDK ကို အသုံးပြု၍ Notification ပို့ရန် အသင့်ဖြစ်နေပါသည်။ "Send Demo Push" ကို နှိပ်ကြည့်ပါ။',
-  },
-  {
     step: 1,
-    label: 'HOP 01',
     title: '၁။ Server မှ Google FCM ဆီသို့ ပို့လွှတ်ခြင်း',
     description:
       'Express Server (firebase-admin) က Service Account Key ဖြင့် အတည်ပြုပြီး Target Token / Topic နှင့် Message Payload ကို Google FCM Backend ဆီ လှမ်းပို့ပါသည်။',
   },
   {
     step: 2,
-    label: 'HOP 02',
     title: '၂။ Google FCM မှ စစ်ဆေးပြီး Browser ဆီ လမ်းကြောင်းပေးခြင်း',
     description:
       'Google FCM Server က Token မှန်/မမှန် စစ်ဆေးပြီး သက်ဆိုင်ရာ User ၏ Browser (Push Service) ဆီသို့ Message ကို ထပ်ဆင့် ပို့ဆောင်ပေးပါသည်။',
   },
   {
     step: 3,
-    label: 'DELIVERED',
     title: '၃။ Client Browser တွင် Notification လက်ခံရရှိခြင်း',
     description:
       'App ဖွင့်ထားလျှင် onMessage() မှ ဖမ်းယူပြီး၊ Tab ပိတ်ထားလျှင် Service Worker (onBackgroundMessage) မှ ဖမ်းယူ၍ မျက်နှာပြင်ပေါ်တွင် Banner ပြသပေးပါသည်။',
@@ -33,37 +23,30 @@ const FLOW_STEPS = [
 ];
 
 export default function FcmFlowDiagram3D() {
-  const [activeStep, setActiveStep] = useState(1);
+  const [flowState, setFlowState] = useState({ step: 1, progress: 0 });
   const [isPlaying, setIsPlaying] = useState(true);
-  const [progress, setProgress] = useState(0); // 0 to 100 along current hop
 
-  // Auto-play animation loop
+  const { step: activeStep, progress } = flowState;
+
   useEffect(() => {
     if (!isPlaying) return;
 
     const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          setActiveStep((current) => (current >= 3 ? 1 : current + 1));
-          return 0;
+      setFlowState((prev) => {
+        if (prev.progress >= 100) {
+          const nextStep = prev.step >= 3 ? 1 : prev.step + 1;
+          return { step: nextStep, progress: 0 };
         }
-        return prev + 4;
+        return { step: prev.step, progress: prev.progress + 4 };
       });
     }, 65);
 
     return () => clearInterval(interval);
   }, [isPlaying]);
 
-  const handleTriggerDemo = () => {
-    setActiveStep(1);
-    setProgress(0);
-    setIsPlaying(true);
-  };
-
   const handleSelectStep = (stepNum) => {
     setIsPlaying(false);
-    setActiveStep(stepNum);
-    setProgress(100);
+    setFlowState({ step: stepNum, progress: 100 });
   };
 
   // Hop 1 Line: Express Server (198, 152) -> Google FCM (356, 202)
@@ -75,59 +58,33 @@ export default function FcmFlowDiagram3D() {
   const packet2X = 484 + (642 - 484) * p1;
   const packet2Y = 202 + (152 - 202) * p1;
 
-  const currentInfo = FLOW_STEPS[activeStep] || FLOW_STEPS[0];
+  const currentInfo =
+    FLOW_STEPS.find((item) => item.step === activeStep) || FLOW_STEPS[0];
 
   return (
     <div className="border-2 border-[#1C1917] rounded-2xl overflow-hidden bg-[#1C1917] text-[#FCF9F4]">
-      {/* Top Control Header */}
-      <div className="bg-[#292524] border-b-2 border-[#1C1917] px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="px-2.5 py-0.5 rounded-full bg-[#EAB32E] text-[#1C1917] font-mono text-xs font-bold">
-            3D ARCHITECTURE DEMO
-          </span>
-          <span className="text-xs sm:text-sm font-medium text-[#F5EFE6]/90">
-            Message ဖြတ်သန်းစီးဆင်းပုံ နမူနာ
-          </span>
-        </div>
+      <div className="bg-[#292524] border-b-2 border-[#1C1917] px-4 py-3 flex items-center justify-between gap-3">
+        <span className="px-3 py-1 rounded-full bg-[#EAB32E] text-[#1C1917] text-xs sm:text-sm font-bold">
+          Message ဖြတ်သန်းစီးဆင်းပုံ နမူနာ
+        </span>
 
-        {/* Interactive Demo Buttons */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setIsPlaying((prev) => !prev)}
-            className="px-3 py-1 rounded-full text-xs font-mono font-bold border border-[#FCF9F4]/30 bg-[#1C1917] hover:bg-[#FCF9F4]/15 transition-colors flex items-center gap-1.5 cursor-pointer"
-          >
-            {isPlaying ? (
-              <>
-                <Pause className="w-3.5 h-3.5 text-[#EAB32E]" />
-                <span>Pause</span>
-              </>
-            ) : (
-              <>
-                <Play className="w-3.5 h-3.5 text-[#4C9F98]" />
-                <span>Auto Play</span>
-              </>
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={handleTriggerDemo}
-            className="px-3.5 py-1 rounded-full text-xs font-mono font-bold border border-[#1C1917] bg-[#F26D21] text-[#FCF9F4] hover:brightness-110 transition-all flex items-center gap-1.5 cursor-pointer"
-          >
-            {activeStep === 3 && !isPlaying ? (
-              <>
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Replay Flow</span>
-              </>
-            ) : (
-              <>
-                <Send className="w-3.5 h-3.5" />
-                <span>Send Demo Push</span>
-              </>
-            )}
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setIsPlaying((prev) => !prev)}
+          className="px-3.5 py-1 rounded-full text-xs font-mono font-bold border border-[#FCF9F4]/30 bg-[#1C1917] hover:bg-[#FCF9F4]/15 transition-colors flex items-center gap-1.5 cursor-pointer"
+        >
+          {isPlaying ? (
+            <>
+              <Pause className="w-3.5 h-3.5 text-[#EAB32E]" />
+              <span>Pause</span>
+            </>
+          ) : (
+            <>
+              <Play className="w-3.5 h-3.5 text-[#4C9F98]" />
+              <span>Auto Play</span>
+            </>
+          )}
+        </button>
       </div>
 
       {/* 2.5D Isometric Vector Canvas */}
@@ -139,7 +96,6 @@ export default function FcmFlowDiagram3D() {
           aria-label="3D Isometric diagram showing FCM message delivery from Express Server to Google FCM and Client Browser"
         >
           <defs>
-            {/* Isometric Diamond Grid Pattern */}
             <pattern
               id="isoGrid"
               width="48"
@@ -159,7 +115,6 @@ export default function FcmFlowDiagram3D() {
           {/* Background Isometric Grid */}
           <rect width="840" height="330" fill="url(#isoGrid)" />
 
-          {/* ================= CONNECTION TRACKS ================= */}
           {/* Track 1: Express Server -> Google FCM */}
           <line
             x1="198"
@@ -182,19 +137,14 @@ export default function FcmFlowDiagram3D() {
             strokeDasharray="7 6"
           />
 
-          {/* ================= NODE 1: EXPRESS SERVER (3D CUBE) ================= */}
-          <g
-            onClick={() => handleSelectStep(1)}
-            className="cursor-pointer transition-transform"
-          >
-            {/* Ground Shadow */}
+          {/* NODE 1: EXPRESS SERVER */}
+          <g onClick={() => handleSelectStep(1)} className="cursor-pointer">
             <polygon
               points="140,178 206,145 140,112 74,145"
               fill="#000000"
               opacity="0.45"
               transform="translate(0, 32)"
             />
-            {/* Left Face */}
             <polygon
               points="82,126 140,155 140,203 82,174"
               fill="#3A827C"
@@ -202,7 +152,6 @@ export default function FcmFlowDiagram3D() {
               strokeWidth="2.5"
               strokeLinejoin="round"
             />
-            {/* Right Face */}
             <polygon
               points="140,155 198,126 198,174 140,203"
               fill="#2B635E"
@@ -210,7 +159,6 @@ export default function FcmFlowDiagram3D() {
               strokeWidth="2.5"
               strokeLinejoin="round"
             />
-            {/* Top Face */}
             <polygon
               points="140,97 198,126 140,155 82,126"
               fill={activeStep === 1 ? '#5EC2B9' : '#4C9F98'}
@@ -218,7 +166,6 @@ export default function FcmFlowDiagram3D() {
               strokeWidth="2.5"
               strokeLinejoin="round"
             />
-            {/* Isometric Server Rack Slots on Left Face */}
             <line
               x1="94"
               y1="146"
@@ -237,7 +184,6 @@ export default function FcmFlowDiagram3D() {
               strokeWidth="2.5"
               strokeLinecap="round"
             />
-            {/* Top Face Code Symbol */}
             <text
               x="140"
               y="131"
@@ -250,7 +196,6 @@ export default function FcmFlowDiagram3D() {
               {'{ API }'}
             </text>
 
-            {/* Label Pill */}
             <rect
               x="66"
               y="222"
@@ -275,19 +220,14 @@ export default function FcmFlowDiagram3D() {
             </text>
           </g>
 
-          {/* ================= NODE 2: GOOGLE FCM BACKEND (3D HUB) ================= */}
-          <g
-            onClick={() => handleSelectStep(2)}
-            className="cursor-pointer"
-          >
-            {/* Ground Shadow */}
+          {/* NODE 2: GOOGLE FCM BACKEND */}
+          <g onClick={() => handleSelectStep(2)} className="cursor-pointer">
             <polygon
               points="420,228 492,192 420,156 348,192"
               fill="#000000"
               opacity="0.45"
               transform="translate(0, 34)"
             />
-            {/* Left Face */}
             <polygon
               points="356,176 420,208 420,256 356,224"
               fill="#C99318"
@@ -295,7 +235,6 @@ export default function FcmFlowDiagram3D() {
               strokeWidth="2.5"
               strokeLinejoin="round"
             />
-            {/* Right Face */}
             <polygon
               points="420,208 484,176 484,224 420,256"
               fill="#A6760E"
@@ -303,7 +242,6 @@ export default function FcmFlowDiagram3D() {
               strokeWidth="2.5"
               strokeLinejoin="round"
             />
-            {/* Top Face */}
             <polygon
               points="420,144 484,176 420,208 356,176"
               fill={activeStep === 2 ? '#FACC15' : '#EAB32E'}
@@ -311,7 +249,6 @@ export default function FcmFlowDiagram3D() {
               strokeWidth="2.5"
               strokeLinejoin="round"
             />
-            {/* Center Cloud/Bolt Icon on Top Face */}
             <text
               x="420"
               y="181"
@@ -323,7 +260,6 @@ export default function FcmFlowDiagram3D() {
               FCM HUB
             </text>
 
-            {/* Label Pill */}
             <rect
               x="342"
               y="275"
@@ -348,19 +284,14 @@ export default function FcmFlowDiagram3D() {
             </text>
           </g>
 
-          {/* ================= NODE 3: CLIENT BROWSER (3D BLOCK) ================= */}
-          <g
-            onClick={() => handleSelectStep(3)}
-            className="cursor-pointer"
-          >
-            {/* Ground Shadow */}
+          {/* NODE 3: CLIENT BROWSER */}
+          <g onClick={() => handleSelectStep(3)} className="cursor-pointer">
             <polygon
               points="700,178 766,145 700,112 634,145"
               fill="#000000"
               opacity="0.45"
               transform="translate(0, 32)"
             />
-            {/* Left Face */}
             <polygon
               points="642,126 700,155 700,203 642,174"
               fill="#5D87CC"
@@ -368,7 +299,6 @@ export default function FcmFlowDiagram3D() {
               strokeWidth="2.5"
               strokeLinejoin="round"
             />
-            {/* Right Face */}
             <polygon
               points="700,155 758,126 758,174 700,203"
               fill="#466BA8"
@@ -376,7 +306,6 @@ export default function FcmFlowDiagram3D() {
               strokeWidth="2.5"
               strokeLinejoin="round"
             />
-            {/* Top Face */}
             <polygon
               points="700,97 758,126 700,155 642,126"
               fill={activeStep === 3 ? '#93B8F5' : '#7EA6E8'}
@@ -384,12 +313,11 @@ export default function FcmFlowDiagram3D() {
               strokeWidth="2.5"
               strokeLinejoin="round"
             />
-            {/* Browser Window Dots on Top Face */}
             <circle cx="686" cy="122" r="3" fill="#F26D21" />
             <circle cx="696" cy="127" r="3" fill="#EAB32E" />
             <circle cx="706" cy="132" r="3" fill="#4C9F98" />
 
-            {/* Pop-up Notification Toast above Browser when Step 3 is Active */}
+            {/* Pop-up Notification Toast when Step 3 is Active */}
             {activeStep === 3 && (
               <g>
                 <rect
@@ -432,7 +360,6 @@ export default function FcmFlowDiagram3D() {
               </g>
             )}
 
-            {/* Label Pill */}
             <rect
               x="626"
               y="222"
@@ -457,7 +384,7 @@ export default function FcmFlowDiagram3D() {
             </text>
           </g>
 
-          {/* ================= ANIMATED TRAVELING PACKETS ================= */}
+          {/* ANIMATED TRAVELING PACKETS */}
           {activeStep === 1 && (
             <g>
               <circle
@@ -502,7 +429,6 @@ export default function FcmFlowDiagram3D() {
 
       {/* Bottom Step Switcher & Live Narration */}
       <div className="bg-[#292524] border-t-2 border-[#1C1917] p-4 sm:p-5 space-y-3">
-        {/* Clickable Step Tabs */}
         <div className="flex flex-wrap items-center gap-2">
           {[1, 2, 3].map((num) => (
             <button
@@ -520,7 +446,6 @@ export default function FcmFlowDiagram3D() {
           ))}
         </div>
 
-        {/* Live Explanation Text */}
         <div className="space-y-1">
           <h4 className="font-bold text-sm sm:text-base text-[#EAB32E]">
             {currentInfo.title}
