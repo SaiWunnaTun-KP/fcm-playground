@@ -20,7 +20,7 @@ export default function DocsOverview() {
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div className="space-y-2">
           <span className="comic-pill bg-[#EAB32E] px-3 py-0.5 text-xs font-mono font-bold">
-            00 // INTRODUCTION
+            ၀၀ // FCM မိတ်ဆက်
           </span>
           <h2 className="text-2xl sm:text-3xl font-bold leading-snug text-[#1C1917]">
             Firebase Cloud Messaging (FCM) ဆိုတာဘာလဲ?
