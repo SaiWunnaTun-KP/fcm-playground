@@ -244,9 +244,135 @@ export default function App() {
     groupId: 'server',
     groupTitle: 'အပိုင်း (၂) — Server Side Setup',
     badgeColor: 'bg-[#F26D21] text-[#FCF9F4]',
-    comingSoon: true,
-    comingSoonDesc:
-      'Node.js (Express) Server တွင် Firebase Admin SDK ချိတ်ဆက်ပြီး Service Account Key ဖြင့် Notification နှင့် Topic များ ပေးပို့ပုံ အဆင့်ဆင့်ကို မကြာမီ ဆက်လက်ထည့်သွင်းပေးပါမည်။',
-    steps: [],
+    steps: [
+      {
+        id: 'server-step-1',
+        number: '၀၁',
+        title: 'Initialize Node.js Project & Install Firebase Admin SDK',
+        summary:
+          'Backend Server မှတစ်ဆင့် Push Notification များ ပေးပို့နိုင်ရန် Node.js Project အသစ်တစ်ခု တည်ဆောက်ပြီး Firebase Admin SDK ထည့်သွင်းပြင်ဆင်ရမည့် အဆင့်ဖြစ်ပါသည်။',
+        bullets: [
+          {
+            subNumber: '၁.၁',
+            text: 'မိမိစက်ထဲတွင် server အမည်ဖြင့် ဖိုဒါအသစ်တစ်ခု ဆောက်ပြီး package.json ဖိုင်ကို စတင်ဖန်တီးပါ။',
+            command: 'mkdir server && cd server && npm init -y',
+          },
+          {
+            subNumber: '၁.၂',
+            text: 'server ဖိုဒါအောက်ရှိ Terminal တွင် အောက်ပါ Command ကို Run ပြီး Firebase Admin SDK ကို ထည့်သွင်းပါ။',
+            command: 'npm install firebase-admin --save',
+          },
+          {
+            subNumber: '၁.၃',
+            text: 'ES Module (import / export) စနစ်ကို အသုံးပြုနိုင်ရန် package.json ဖိုင်ထဲတွင် "type": "module" ကို ထည့်သွင်းပြင်ဆင်ပါ။',
+            codeFile: 'server/package.json',
+            code: `{
+  "name": "server",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^13.0.0"
+  }
+}`,
+          },
+        ],
+      },
+      {
+        id: 'server-step-2',
+        number: '၀၂',
+        title: 'Generate Service Account Private Key',
+        summary:
+          'Backend Server က မိမိ၏ Firebase Project ကိုယ်စား Notification ပေးပို့ခွင့်ရရှိစေရန် Firebase Console မှ Service Account Private Key (.json) ဖိုင် ထုတ်ယူရမည့် အဆင့်ဖြစ်ပါသည်။',
+        bullets: [
+          {
+            subNumber: '၂.၁',
+            text: 'Firebase Console ထဲရှိ မိမိ Project ၏ ဘယ်ဘက်အပေါ် ဂီယာပုံ (Project Settings) ထဲသို့ ဝင်ပါ။',
+          },
+          {
+            subNumber: '၂.၂',
+            text: 'အပေါ်ဘက် Tab များထဲမှ Service accounts tab ကို နှိပ်ပါ။ Firebase Admin SDK အောက်တွင် Node.js ကို ရွေးချယ်ထားကြောင်း စစ်ဆေးပါ။',
+          },
+          {
+            subNumber: '၂.၃',
+            text: 'အောက်နားရှိ Generate new private key ခလုတ်ကို နှိပ်ပြီး ပေါ်လာသော အတည်ပြု Box တွင် Generate key ကို နှိပ်၍ .json ဖိုင်ကို Download ရယူပါ။',
+          },
+          {
+            subNumber: '၂.၄',
+            text: 'Download ရလာသော .json ဖိုင်ကို server/ ဖိုဒါအောက်သို့ ရွှေ့ထည့်ပြီး နာမည်မှတ်ရလွယ်စေရန် serviceAccountKey.json ဟု ပြောင်းလဲသိမ်းဆည်းပါ။',
+          },
+        ],
+        warning:
+          'serviceAccountKey.json ဖိုင်ထဲတွင် မိမိ၏ Firebase Project တစ်ခုလုံးကို ထိန်းချုပ်နိုင်သော Secret Key ပါဝင်သောကြောင့် GitHub ပေါ် လုံးဝ Push မတင်မိစေရန် server/.gitignore ဖိုင်ဆောက်၍ serviceAccountKey.json နှင့် node_modules တို့ကို ထည့်သွင်းထားပါ။',
+      },
+      {
+        id: 'server-step-3',
+        number: '၀၃',
+        title: 'Initialize Admin SDK & Send Push Notification',
+        summary:
+          'Service Account Key ဖြင့် Firebase Admin SDK ကို Initialize ပြုလုပ်ပြီး Client Browser ၏ FCM Registration Token ဆီသို့ Server မှ တိုက်ရိုက် Notification ပေးပို့စမ်းသပ်ပါမည်။',
+        bullets: [
+          {
+            subNumber: '၃.၁',
+            text: 'server/ ဖိုဒါအောက်တွင် index.js အမည်ဖြင့် ဖိုင်တစ်ဖိုင် ဆောက်ပြီး အောက်ပါကုဒ်ကို ထည့်သွင်းပါ။ (TARGET_FCM_TOKEN နေရာတွင် Client မှ ရရှိထားသော Token ကို အစားထိုးပါ)',
+            codeFile: 'server/index.js',
+            code: `import { readFileSync } from 'fs';
+import { initializeApp, cert } from 'firebase-admin/app';
+import { getMessaging } from 'firebase-admin/messaging';
+
+// 1. Service Account JSON ဖိုင်ကို ဖတ်ယူပြီး Firebase Admin SDK ကို Initialize လုပ်ခြင်း
+const serviceAccount = JSON.parse(
+  readFileSync('./serviceAccountKey.json', 'utf8')
+);
+
+initializeApp({
+  credential: cert(serviceAccount),
+});
+
+// 2. Client Browser မှ ရရှိထားသော FCM Registration Token ထည့်ပါ
+const TARGET_FCM_TOKEN = 'FCM_REGISTRATION_TOKEN';
+
+async function sendTestNotification() {
+  const message = {
+    token: TARGET_FCM_TOKEN,
+    notification: {
+      title: 'Hello from Node.js Admin SDK!',
+      body: 'Server side မှ တိုက်ရိုက်ပေးပို့လိုက်သော Notification ဖြစ်ပါသည်။',
+    },
+  };
+
+  try {
+    const response = await getMessaging().send(message);
+    console.log('Notification ပေးပို့မှု အောင်မြင်ပါသည်! Message ID:', response);
+    process.exit(0);
+  } catch (error) {
+    console.error('Notification ပေးပို့ရာတွင် အမှားဖြစ်ပွားပါသည်:', error);
+    process.exit(1);
+  }
+}
+
+// ဖိုင် Run လိုက်သည်နှင့် တစ်ပြိုင်နက် Function ကို ခေါ်ယူခြင်း
+sendTestNotification();`,
+            tips: [
+              {
+                title: 'ES Module (type: "module") တွင် Import ခေါ်သုံးပုံ',
+                text: 'package.json ၌ "type": "module" အသုံးပြုထားပါက firebase-admin မှ တိုက်ရိုက် named import မခေါ်ဘဲ Modular SDK ဖြစ်သော firebase-admin/app နှင့် firebase-admin/messaging တို့မှ ခွဲ၍ import ခေါ်သုံးရပါမည်။',
+              },
+            ],
+          },
+          {
+            subNumber: '၃.၂',
+            text: 'Terminal ထဲတွင် အောက်ပါ Command ကို Run ပြီး Client Browser ဆီသို့ Notification ပေးပို့စမ်းသပ်ပါ။',
+            command: 'node index.js',
+            tips: [
+              {
+                title: 'THIRD_PARTY_PERMISSION_DENIED (403 Error) ဖြေရှင်းနည်း',
+                text: 'Client ဘက်မှ Token ထုတ်စဉ်က သုံးခဲ့သော Firebase Project / VAPID Key နှင့် Server ဘက်မှ serviceAccountKey.json မကိုက်ညီလျှင် ဤ 403 Error တက်တတ်ပါသည်။ Client နှင့် Server ၏ projectId တူညီကြောင်း စစ်ဆေးပြီး Browser Inspect (Application > Service Workers) မှ Service Worker အဟောင်းကို Unregister လုပ်ကာ Token အသစ်ပြန်ထုတ်၍ စမ်းသပ်ပါ။',
+              },
+            ],
+          },
+        ],
+      },
+    ],
   },
 ];
