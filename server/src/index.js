@@ -44,6 +44,10 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-app.listen(PORT, () => {
-  console.log(`FCM Playground Server running on http://localhost:${PORT}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`FCM Playground Server running on http://localhost:${PORT}`);
+  });
+}
+
+export default app;
