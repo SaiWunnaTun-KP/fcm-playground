@@ -3,6 +3,22 @@ export function translateFcmError(error) {
   const rawMessage = error?.message || 'အမည်မသိ အမှားတစ်ခု ဖြစ်ပွားပါသည်။';
 
   if (
+    rawMessage.includes('cloudmessaging.topicSubscriptions') ||
+    rawMessage.includes('topicSubscriptions.create') ||
+    rawMessage.includes('topicSubscriptions.delete')
+  ) {
+    return {
+      code: 'messaging/topic-permission-denied',
+      title: 'Topic စီမံခန့်ခွဲခွင့် (IAM Permission) မရှိသေးပါ',
+      explanation:
+        'Service Account တွင် Topic Subscribe/Unsubscribe ပြုလုပ်ရန် cloudmessaging.topicSubscriptions Permission မပါဝင်သေးပါ။',
+      suggestion:
+        'Google Cloud Console > IAM & Admin > IAM ထဲသို့သွားပြီး firebase-adminsdk Service Account ကို "Firebase Cloud Messaging Admin" Role ထပ်ပေါင်းထည့်ပေးပါ။',
+      rawMessage,
+    };
+  }
+
+  if (
     code === 'messaging/third-party-permission-denied' ||
     rawMessage.includes('THIRD_PARTY_PERMISSION_DENIED')
   ) {

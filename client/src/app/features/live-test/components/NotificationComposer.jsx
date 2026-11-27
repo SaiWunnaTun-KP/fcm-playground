@@ -389,7 +389,7 @@ export default function NotificationComposer({
                 <div className="font-bold text-[#1C1917]">
                   {lastApiResult.error?.title || 'ပေးပို့မှု မအောင်မြင်ပါ'}
                 </div>
-                <p className="text-[#1C1917]/90">{lastApiResult.error?.explanation}</p>
+                <p className="text-[#1C1917]/90 break-all">{lastApiResult.error?.explanation}</p>
                 {lastApiResult.error?.suggestion && (
                   <p className="text-xs font-medium bg-[#FCF9F4] border border-[#1C1917]/30 rounded-lg p-2">
                     <strong>ဖြေရှင်းရန်:</strong> {lastApiResult.error.suggestion}
